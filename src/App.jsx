@@ -10,6 +10,9 @@ import SocialSection from './sections/SocialSection';
 export default function App() {
   return (
     <>
+      <a href="#evolucao" className="sr-only" style={{ position: 'absolute', top: 0, left: 0, zIndex: 9999 }}>
+        Pular para o conteudo
+      </a>
       <Navbar />
       <main>
         <HeroSection />

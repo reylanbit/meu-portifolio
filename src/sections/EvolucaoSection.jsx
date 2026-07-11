@@ -1,52 +1,60 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { portfolioData } from '../data/portfolio';
 
-const SilhuetaSVG = ({ index, total }) => {
-  const silhuetas = [
-    // Australopithecus
-    <svg key={0} viewBox="0 0 100 120" width="60" height="72">
-      <circle cx="50" cy="25" r="14" fill="none" stroke="#00ff88" strokeWidth="2"/>
-      <path d="M50 39 L35 70 L25 100 M50 39 L55 75 L50 100 M50 39 L70 65 L75 95" fill="none" stroke="#00ff88" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M35 50 L20 60" fill="none" stroke="#00ff88" strokeWidth="2" strokeLinecap="round"/>
-      <rect x="14" y="55" width="14" height="20" rx="2" fill="none" stroke="#c9a84c" strokeWidth="1.5" opacity="0.8"/>
-    </svg>,
-    // Homo habilis
-    <svg key={1} viewBox="0 0 100 120" width="60" height="72">
-      <circle cx="50" cy="22" r="15" fill="none" stroke="#00cc6a" strokeWidth="2"/>
-      <path d="M50 37 L40 68 L32 98 M50 37 L56 72 L50 98 M50 37 L68 60 L72 92" fill="none" stroke="#00cc6a" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M40 52 L25 55" fill="none" stroke="#00cc6a" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M68 52 L80 48" fill="none" stroke="#00cc6a" strokeWidth="2" strokeLinecap="round"/>
-      <rect x="72" y="40" width="18" height="12" rx="1" fill="none" stroke="#c9a84c" strokeWidth="1.5" opacity="0.8"/>
-    </svg>,
-    // Homo erectus
-    <svg key={2} viewBox="0 0 100 120" width="60" height="72">
-      <circle cx="50" cy="20" r="16" fill="none" stroke="#00aa55" strokeWidth="2"/>
-      <path d="M50 36 L42 66 L38 96 M50 36 L55 70 L52 96 M50 36 L65 58 L70 90" fill="none" stroke="#00aa55" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M42 50 L30 42" fill="none" stroke="#00aa55" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M65 50 L78 45" fill="none" stroke="#00aa55" strokeWidth="2" strokeLinecap="round"/>
-      <line x1="78" y1="45" x2="78" y2="90" stroke="#c9a84c" strokeWidth="2" opacity="0.8"/>
-    </svg>,
-    // Neanderthal
-    <svg key={3} viewBox="0 0 100 120" width="60" height="72">
-      <circle cx="50" cy="18" r="17" fill="none" stroke="#008844" strokeWidth="2"/>
-      <path d="M50 35 L43 64 L40 94 M50 35 L54 68 L50 94 M50 35 L62 56 L68 88" fill="none" stroke="#008844" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M43 48 L28 44" fill="none" stroke="#008844" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M62 48 L76 40" fill="none" stroke="#008844" strokeWidth="2" strokeLinecap="round"/>
-      <ellipse cx="50" cy="100" rx="20" ry="8" fill="none" stroke="#c9a84c" strokeWidth="1.5" opacity="0.6"/>
-    </svg>,
-    // Homo sapiens
-    <svg key={4} viewBox="0 0 100 120" width="60" height="72">
-      <circle cx="50" cy="18" r="16" fill="none" stroke="#00ff88" strokeWidth="2.5"/>
-      <path d="M50 34 L44 62 L42 92 M50 34 L53 66 L50 92 M50 34 L60 54 L66 86" fill="none" stroke="#00ff88" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M44 46 L32 52 L28 48" fill="none" stroke="#00ff88" strokeWidth="2" strokeLinecap="round"/>
-      <path d="M60 46 L72 50 L80 44" fill="none" stroke="#00ff88" strokeWidth="2" strokeLinecap="round"/>
-      <rect x="22" y="38" width="22" height="14" rx="2" fill="none" stroke="#c9a84c" strokeWidth="1.5"/>
-      <circle cx="50" cy="18" r="22" fill="none" stroke="#00ff88" strokeWidth="0.5" opacity="0.3"/>
-    </svg>,
-  ];
-  return silhuetas[index] || null;
-};
+function MetricCounter({ value, label, delay }) {
+  const ref = useRef(null);
+  const [count, setCount] = useState(0);
+  const [hasAnimated, setHasAnimated] = useState(false);
+
+  const numericValue = parseInt(value);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+          const duration = 1500;
+          const startTime = performance.now();
+          const animate = (currentTime) => {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            setCount(Math.floor(eased * numericValue));
+            if (progress < 1) requestAnimationFrame(animate);
+          };
+          requestAnimationFrame(animate);
+        }
+      },
+      { threshold: 0.5 }
+    );
+    if (ref.current) observer.observe(ref.current);
+    return () => observer.disconnect();
+  }, [hasAnimated, numericValue]);
+
+  return (
+    <div ref={ref} style={{ textAlign: 'center' }}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.8 }}
+        whileInView={{ opacity: 1, scale: 1 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay }}
+        className="metric-value"
+      >
+        {count}
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: delay + 0.1 }}
+        className="metric-label"
+      >
+        {label}
+      </motion.div>
+    </div>
+  );
+}
 
 function EstagioCard({ estagio, index }) {
   const ref = useRef(null);
@@ -54,135 +62,225 @@ function EstagioCard({ estagio, index }) {
     target: ref,
     offset: ['start end', 'center center'],
   });
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [0, 1]);
-  const x = useTransform(scrollYProgress, [0, 0.5], [index % 2 === 0 ? -60 : 60, 0]);
+  const opacity = useTransform(scrollYProgress, [0, 0.4], [0, 1]);
+  const x = useTransform(scrollYProgress, [0, 0.4], [index % 2 === 0 ? -80 : 80, 0]);
+  const blurVal = useTransform(scrollYProgress, [0, 0.4], [8, 0]);
   const isLeft = index % 2 === 0;
 
   return (
-    <motion.div
+    <motion.article
       ref={ref}
-      style={{ opacity, x, display: 'flex', justifyContent: isLeft ? 'flex-start' : 'flex-end', position: 'relative', marginBottom: 60 }}
+      style={{ opacity, x, display: 'flex', justifyContent: isLeft ? 'flex-start' : 'flex-end', position: 'relative', marginBottom: 40 }}
+      role="listitem"
     >
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: isLeft ? 'flex-start' : 'flex-end', maxWidth: 420, width: '100%' }}>
+      <motion.div
+        style={{
+          filter: blurVal.get ? undefined : 'blur(0px)',
+          maxWidth: 500,
+          width: '100%',
+        }}
+      >
         <div style={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 16,
-          flexDirection: isLeft ? 'row' : 'row-reverse',
-          marginBottom: 8,
+          display: 'grid',
+          gridTemplateColumns: '120px 1fr',
+          gap: 20,
+          alignItems: 'start',
         }}>
-          <div style={{
-            width: 80,
-            height: 80,
-            border: `2px solid ${estagio.corretivo}`,
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: 'rgba(10,10,10,0.9)',
-            flexShrink: 0,
-          }}>
-            <SilhuetaSVG index={index} total={5} />
-          </div>
-          <div style={{ textAlign: isLeft ? 'left' : 'right' }}>
-            <div style={{
-              fontFamily: "'Fira Code', monospace",
-              fontSize: '0.7rem',
-              color: '#c9a84c',
-              marginBottom: 2,
-            }}>
-              etapa {String(estagio.ordem).padStart(2, '0')} / 05
+          <motion.div
+            whileHover={{ scale: 1.05, rotate: 2 }}
+            style={{
+              width: 120,
+              height: 120,
+              borderRadius: 'var(--radius)',
+              overflow: 'hidden',
+              border: `2px solid ${estagio.corretivo}`,
+              boxShadow: `0 0 30px ${estagio.corretivo}22`,
+              flexShrink: 0,
+              position: 'relative',
+            }}
+          >
+            <img
+              src={estagio.imagem}
+              alt={estagio.imagemAlt}
+              loading="lazy"
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+          </motion.div>
+
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+              <span style={{
+                fontFamily: "'Fragment Mono', monospace",
+                fontSize: '0.65rem',
+                color: '#c9a84c',
+                letterSpacing: '0.1em',
+              }}>
+                {String(estagio.ordem).padStart(2, '0')} / 07
+              </span>
             </div>
+
             <h3 style={{
-              fontFamily: "'Fira Code', monospace",
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
               fontSize: '1.1rem',
               color: estagio.corretivo,
-              fontWeight: 600,
+              fontWeight: 700,
+              marginBottom: 4,
+              letterSpacing: '-0.02em',
             }}>
               {estagio.especie}
             </h3>
-          </div>
-        </div>
 
-        <div className="card" style={{ width: '100%' }}>
-          <div style={{
-            fontFamily: "'Fira Code', monospace",
-            fontSize: '0.8rem',
-            color: '#f0f0f0',
-            fontWeight: 600,
-            marginBottom: 4,
-          }}>
-            {estagio.faseProfissional}
-          </div>
-          <div style={{ fontSize: '0.8rem', color: '#888' }}>
-            {estagio.local}
-          </div>
-          <div style={{
-            marginTop: 12,
-            padding: '8px 12px',
-            background: 'rgba(0,255,136,0.05)',
-            borderRadius: 8,
-            fontFamily: "'Fira Code', monospace",
-            fontSize: '0.7rem',
-            color: '#888',
-            lineHeight: 1.4,
-            fontStyle: 'italic',
-          }}>
-            {estagio.imagemAlt}
+            <div style={{
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: '0.9rem',
+              color: '#f0f0f0',
+              fontWeight: 500,
+              marginBottom: 2,
+            }}>
+              {estagio.faseProfissional}
+            </div>
+
+            <div style={{
+              fontFamily: "'Fragment Mono', monospace",
+              fontSize: '0.72rem',
+              color: '#888',
+            }}>
+              {estagio.local}
+            </div>
+
+            <div style={{
+              marginTop: 12,
+              padding: '10px 14px',
+              background: `linear-gradient(135deg, ${estagio.corretivo}08, transparent)`,
+              borderRadius: 'var(--radius-xs)',
+              border: `1px solid ${estagio.corretivo}15`,
+              fontFamily: "'Fragment Mono', monospace",
+              fontSize: '0.68rem',
+              color: '#888',
+              lineHeight: 1.5,
+              fontStyle: 'italic',
+            }}>
+              {estagio.imagemAlt}
+            </div>
           </div>
         </div>
-      </div>
-    </motion.div>
+      </motion.div>
+    </motion.article>
   );
 }
 
 export default function EvolucaoSection() {
   const containerRef = useRef(null);
-  const { estagios, conteudo } = portfolioData;
+  const { estagios, conteudo, metricas } = portfolioData;
 
   return (
-    <section id="evolucao" className="section" ref={containerRef}>
-      <motion.h2
-        className="section-title"
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.6 }}
-      >
-        Evolucao
-      </motion.h2>
+    <section id="evolucao" className="section" ref={containerRef} aria-labelledby="evolucao-title">
+      <div className="section-header">
+        <motion.span
+          className="section-label"
+          initial={{ opacity: 0, x: -20 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+        >
+          // evolucao
+        </motion.span>
+        <motion.h2
+          id="evolucao-title"
+          className="section-title"
+          initial={{ opacity: 0, y: 30, filter: 'blur(8px)' }}
+          whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <span className="accent">16 anos</span> de evolucao
+        </motion.h2>
+        <motion.div
+          className="section-divider"
+          initial={{ width: 0 }}
+          whileInView={{ width: 60 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.8, delay: 0.3 }}
+        />
+      </div>
 
       <motion.p
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, y: 20, filter: 'blur(6px)' }}
+        whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
         viewport={{ once: true }}
-        transition={{ duration: 0.6, delay: 0.2 }}
+        transition={{ duration: 0.7, delay: 0.2 }}
         style={{
-          fontFamily: "'Fira Code', monospace",
-          fontSize: 'clamp(1.2rem, 3vw, 1.8rem)',
+          fontFamily: "'Plus Jakarta Sans', sans-serif",
+          fontSize: 'clamp(1.1rem, 2.5vw, 1.5rem)',
+          fontWeight: 500,
           color: '#f0f0f0',
           textAlign: 'center',
-          marginBottom: 80,
+          marginBottom: 16,
           lineHeight: 1.4,
+          maxWidth: 600,
+          marginLeft: 'auto',
+          marginRight: 'auto',
         }}
       >
-        <span style={{ color: '#c9a84c' }}>"</span>
+        <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>"</span>
         {conteudo.evolucao.fraseImpacto}
-        <span style={{ color: '#c9a84c' }}>"</span>
+        <span style={{ color: '#c9a84c', fontStyle: 'italic' }}>"</span>
       </motion.p>
 
-      <div style={{ position: 'relative', maxWidth: 900, margin: '0 auto' }}>
+      <motion.p
+        initial={{ opacity: 0, y: 15 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.3 }}
+        style={{
+          fontFamily: "'Fragment Mono', monospace",
+          fontSize: '0.8rem',
+          color: '#888',
+          textAlign: 'center',
+          marginBottom: 64,
+          maxWidth: 500,
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+      >
+        {conteudo.evolucao.subFrase}
+      </motion.p>
+
+      {/* Metricas */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(4, 1fr)',
+        gap: 24,
+        marginBottom: 80,
+        maxWidth: 700,
+        marginLeft: 'auto',
+        marginRight: 'auto',
+      }}>
+        <MetricCounter value={metricas.anosExperiencia} label="anos" delay={0} />
+        <MetricCounter value={metricas.projetosEntregues} label="projetos" delay={0.1} />
+        <MetricCounter value={metricas.stackTecnologias} label="techs" delay={0.2} />
+        <MetricCounter value={metricas.comunidadeImpactada} label="pessoas" delay={0.3} />
+      </div>
+
+      {/* Timeline */}
+      <div style={{ position: 'relative', maxWidth: 700, margin: '0 auto' }} role="list" aria-label="Linha do tempo da evolucao profissional">
         {/* Timeline line */}
-        <div style={{
-          position: 'absolute',
-          left: '50%',
-          top: 0,
-          bottom: 0,
-          width: 2,
-          background: 'linear-gradient(to bottom, transparent, #00ff88, #00ff88, transparent)',
-          transform: 'translateX(-50%)',
-          opacity: 0.3,
-        }} />
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            left: 60,
+            top: 0,
+            bottom: 0,
+            width: 2,
+            background: 'linear-gradient(to bottom, transparent, rgba(0,255,136,0.2), rgba(0,255,136,0.2), transparent)',
+          }}
+        />
 
         {estagios.map((estagio, index) => (
           <EstagioCard key={estagio.ordem} estagio={estagio} index={index} />

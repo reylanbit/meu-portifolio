@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useState, useRef, useEffect } from 'react';
 import { portfolioData } from '../data/portfolio';
+import TiltCard from '../components/TiltCard';
 
 function AnimatedMetric({ value, label }) {
   const ref = useRef(null);
@@ -64,20 +65,23 @@ function CaseCard({ caso, index }) {
   const [expandido, setExpandido] = useState(false);
 
   return (
-    <motion.article
+    <motion.div
       initial={{ opacity: 0, y: 40, filter: 'blur(6px)' }}
       whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay: index * 0.12, ease: [0.16, 1, 0.3, 1] }}
-      className="card"
-      style={{ cursor: 'pointer' }}
-      onClick={() => setExpandido(!expandido)}
-      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandido(!expandido); } }}
-      role="button"
-      tabIndex={0}
-      aria-expanded={expandido}
-      aria-label={`Caso: ${caso.nome}`}
     >
+      <TiltCard
+        className="card"
+        intensity={12}
+        style={{ cursor: 'pointer' }}
+        onClick={() => setExpandido(!expandido)}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setExpandido(!expandido); } }}
+        role="button"
+        tabIndex={0}
+        aria-expanded={expandido}
+        aria-label={`Caso: ${caso.nome}`}
+      >
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
         <div>
           <h3 style={{
@@ -159,7 +163,8 @@ function CaseCard({ caso, index }) {
           clique para expandir
         </p>
       )}
-    </motion.article>
+      </TiltCard>
+    </motion.div>
   );
 }
 

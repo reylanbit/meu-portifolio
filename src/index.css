@@ -308,6 +308,30 @@ h1, h2, h3, h4, h5, h6 {
   100% { background-position: 200% 0; }
 }
 
+.tilt-card {
+  transition: transform 0.15s ease-out, box-shadow 0.3s;
+}
+
+.tilt-card:hover {
+  box-shadow: 0 8px 40px rgba(0, 255, 136, 0.08);
+}
+
+.magnetic {
+  display: inline-block;
+}
+
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
+
+@media (pointer: coarse) {
+  * {
+    cursor: auto !important;
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

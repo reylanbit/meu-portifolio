@@ -1,6 +1,8 @@
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { portfolioData } from '../data/portfolio';
+import MouseParallax from '../components/MouseParallax';
+import { RippleButton } from '../components/Ripple';
 
 export default function HeroSection() {
   const ref = useRef(null);
@@ -52,8 +54,9 @@ export default function HeroSection() {
         }} />
       </motion.div>
 
-      {/* Floating silhouette */}
-      <motion.div
+      {/* Floating silhouette with mouse parallax */}
+      <MouseParallax
+        speed={0.015}
         style={{
           position: 'absolute',
           top: '10%',
@@ -61,17 +64,17 @@ export default function HeroSection() {
           y: silhouetteY,
           opacity: silhouetteOpacity,
           scale: silhouetteScale,
+          pointerEvents: 'none',
         }}
-        aria-hidden="true"
       >
-        <svg viewBox="0 0 120 160" width="clamp(120px, 20vw, 280)" style={{ filter: 'blur(0.5px)' }}>
+        <svg viewBox="0 0 120 160" width="clamp(120px, 20vw, 280)" style={{ filter: 'blur(0.5px)' }} aria-hidden="true">
           <circle cx="60" cy="28" r="20" fill="#00ff88" />
           <path d="M60 48 L44 88 L38 140" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
           <path d="M60 48 L76 88 L72 140" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
           <path d="M60 48 L28 68 L18 62" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
           <path d="M60 48 L92 68 L102 62" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
         </svg>
-      </motion.div>
+      </MouseParallax>
 
       {/* Floating particles */}
       <div aria-hidden="true">
@@ -174,22 +177,22 @@ export default function HeroSection() {
           transition={{ duration: 0.8, delay: 1, ease: [0.16, 1, 0.3, 1] }}
           style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}
         >
-          <motion.button
-            className="btn"
-            whileHover={{ scale: 1.03, boxShadow: '0 0 40px rgba(0,255,136,0.3)' }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => document.getElementById('evolucao')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            explorar evolucao
-          </motion.button>
-          <motion.button
-            className="btn btn--dourado"
-            whileHover={{ scale: 1.03, boxShadow: '0 0 40px rgba(201,168,76,0.2)' }}
-            whileTap={{ scale: 0.97 }}
-            onClick={() => document.getElementById('profissional')?.scrollIntoView({ behavior: 'smooth' })}
-          >
-            ver trabalho
-          </motion.button>
+          <MagneticButton strength={0.3}>
+            <RippleButton
+              className="btn"
+              onClick={() => document.getElementById('evolucao')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              explorar evolucao
+            </RippleButton>
+          </MagneticButton>
+          <MagneticButton strength={0.3}>
+            <RippleButton
+              className="btn btn--dourado"
+              onClick={() => document.getElementById('profissional')?.scrollIntoView({ behavior: 'smooth' })}
+            >
+              ver trabalho
+            </RippleButton>
+          </MagneticButton>
         </motion.div>
       </motion.div>
 

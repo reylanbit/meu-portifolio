@@ -241,7 +241,7 @@ export const portfolioData = {
         perifericos: ["Teclado Mecanico Redragon", "Mouse Logitech G502", "Webcam Logitech C920", "Headset HyperX Cloud"],
       },
       playlist:
-        "https://open.spotify.com/playlist/37i9dQZF1DWYBO1MoTDhZI",
+        "https://open.spotify.com/user/31tqr6n5qdgyu4nmmey4dthnaity?si=a9432e277a4c4c3f",
     },
 
     social: {

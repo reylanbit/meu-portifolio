@@ -1,8 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function RippleContainer({ children, className, style, ...props }) {
   const [ripples, setRipples] = useState([]);
+  const timeoutsRef = useRef([]);
 
   const createRipple = useCallback((e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -11,9 +12,14 @@ export default function RippleContainer({ children, className, style, ...props }
     const id = Date.now() + Math.random();
 
     setRipples((prev) => [...prev, { x, y, id }]);
-    setTimeout(() => {
+    const tid = setTimeout(() => {
       setRipples((prev) => prev.filter((r) => r.id !== id));
     }, 800);
+    timeoutsRef.current.push(tid);
+  }, []);
+
+  useEffect(() => {
+    return () => timeoutsRef.current.forEach(clearTimeout);
   }, []);
 
   return (
@@ -50,6 +56,7 @@ export default function RippleContainer({ children, className, style, ...props }
 
 export function RippleButton({ children, className, style, ...props }) {
   const [ripples, setRipples] = useState([]);
+  const timeoutsRef = useRef([]);
 
   const createRipple = useCallback((e) => {
     const rect = e.currentTarget.getBoundingClientRect();
@@ -58,9 +65,14 @@ export function RippleButton({ children, className, style, ...props }) {
     const id = Date.now() + Math.random();
 
     setRipples((prev) => [...prev, { x, y, id }]);
-    setTimeout(() => {
+    const tid = setTimeout(() => {
       setRipples((prev) => prev.filter((r) => r.id !== id));
     }, 700);
+    timeoutsRef.current.push(tid);
+  }, []);
+
+  useEffect(() => {
+    return () => timeoutsRef.current.forEach(clearTimeout);
   }, []);
 
   return (

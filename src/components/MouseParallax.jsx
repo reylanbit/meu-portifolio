@@ -17,11 +17,13 @@ export default function MouseParallax({ children, speed = 0.02, className, style
   const springX = useSpring(mouse.x, { stiffness: 50, damping: 20 });
   const springY = useSpring(mouse.y, { stiffness: 50, damping: 20 });
 
+  const { y: parentY, x: parentX, ...restStyle } = style || {};
+
   return (
     <motion.div
       className={className}
       style={{
-        ...style,
+        ...restStyle,
         x: springX,
         y: springY,
       }}

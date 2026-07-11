@@ -2,6 +2,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef } from 'react';
 import { portfolioData } from '../data/portfolio';
 import MouseParallax from '../components/MouseParallax';
+import MagneticButton from '../components/MagneticButton';
 import { RippleButton } from '../components/Ripple';
 
 export default function HeroSection() {
@@ -54,9 +55,8 @@ export default function HeroSection() {
         }} />
       </motion.div>
 
-      {/* Floating silhouette with mouse parallax */}
-      <MouseParallax
-        speed={0.015}
+      {/* Floating silhouette with mouse parallax + scroll parallax */}
+      <motion.div
         style={{
           position: 'absolute',
           top: '10%',
@@ -66,15 +66,18 @@ export default function HeroSection() {
           scale: silhouetteScale,
           pointerEvents: 'none',
         }}
+        aria-hidden="true"
       >
-        <svg viewBox="0 0 120 160" width="clamp(120px, 20vw, 280)" style={{ filter: 'blur(0.5px)' }} aria-hidden="true">
-          <circle cx="60" cy="28" r="20" fill="#00ff88" />
-          <path d="M60 48 L44 88 L38 140" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M60 48 L76 88 L72 140" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M60 48 L28 68 L18 62" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
-          <path d="M60 48 L92 68 L102 62" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
-        </svg>
-      </MouseParallax>
+        <MouseParallax speed={0.015}>
+          <svg viewBox="0 0 120 160" width="clamp(120px, 20vw, 280)" style={{ filter: 'blur(0.5px)' }}>
+            <circle cx="60" cy="28" r="20" fill="#00ff88" />
+            <path d="M60 48 L44 88 L38 140" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M60 48 L76 88 L72 140" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M60 48 L28 68 L18 62" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
+            <path d="M60 48 L92 68 L102 62" fill="none" stroke="#00ff88" strokeWidth="2.5" strokeLinecap="round" />
+          </svg>
+        </MouseParallax>
+      </motion.div>
 
       {/* Floating particles */}
       <div aria-hidden="true">

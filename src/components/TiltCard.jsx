@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 
-export default function TiltCard({ children, className, style, intensity = 15 }) {
+export default function TiltCard({ children, className, style, intensity = 15, ...props }) {
   const ref = useRef(null);
   const [transform, setTransform] = useState('perspective(800px) rotateX(0deg) rotateY(0deg) scale(1)');
   const [glare, setGlare] = useState({ x: 50, y: 50, opacity: 0 });
@@ -39,6 +39,7 @@ export default function TiltCard({ children, className, style, intensity = 15 })
         position: 'relative',
         overflow: 'hidden',
       }}
+      {...props}
     >
       {children}
       {/* Glare overlay */}

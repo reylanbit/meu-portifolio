@@ -1,8 +1,13 @@
 import { motion } from 'framer-motion';
+import { useMemo } from 'react';
 import { portfolioData } from '../data/portfolio';
 
 export default function CriativoSection() {
   const { criativo } = portfolioData.conteudo;
+
+  const heatmapColors = useMemo(() =>
+    [...Array(8)].map(() => [...Array(12)].map(() => 0.05 + Math.random() * 0.25)),
+  []);
 
   return (
     <section id="criativo" className="section" aria-labelledby="criativo-title">
@@ -82,16 +87,16 @@ export default function CriativoSection() {
                   </svg>
                 ) : (
                   <svg viewBox="0 0 200 120" width="180" height="108" style={{ opacity: 0.5 }} aria-hidden="true">
-                    {[...Array(8)].map((_, row) =>
-                      [...Array(12)].map((_, col) => (
+                    {heatmapColors.map((row, rowIdx) =>
+                      row.map((opacity, col) => (
                         <rect
-                          key={`${row}-${col}`}
+                          key={`${rowIdx}-${col}`}
                           x={col * 16 + 4}
-                          y={row * 14 + 2}
+                          y={rowIdx * 14 + 2}
                           width="14"
                           height="12"
                           rx="2"
-                          fill={`rgba(0, 255, 136, ${0.05 + Math.random() * 0.25})`}
+                          fill={`rgba(0, 255, 136, ${opacity})`}
                         />
                       ))
                     )}

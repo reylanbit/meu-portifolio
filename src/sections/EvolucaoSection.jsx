@@ -10,6 +10,7 @@ function MetricCounter({ value, label, delay }) {
   const numericValue = parseInt(value);
 
   useEffect(() => {
+    let frameId;
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasAnimated) {
@@ -21,15 +22,15 @@ function MetricCounter({ value, label, delay }) {
             const progress = Math.min(elapsed / duration, 1);
             const eased = 1 - Math.pow(1 - progress, 3);
             setCount(Math.floor(eased * numericValue));
-            if (progress < 1) requestAnimationFrame(animate);
+            if (progress < 1) frameId = requestAnimationFrame(animate);
           };
-          requestAnimationFrame(animate);
+          frameId = requestAnimationFrame(animate);
         }
       },
       { threshold: 0.5 }
     );
     if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
+    return () => { observer.disconnect(); cancelAnimationFrame(frameId); };
   }, [hasAnimated, numericValue]);
 
   return (
@@ -75,7 +76,7 @@ function EstagioCard({ estagio, index }) {
     >
       <motion.div
         style={{
-          filter: blurVal.get ? undefined : 'blur(0px)',
+          filter: blurVal,
           maxWidth: 500,
           width: '100%',
         }}

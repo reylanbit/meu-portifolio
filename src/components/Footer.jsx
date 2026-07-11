@@ -71,6 +71,8 @@ function AnimatedContactIcon({ Icon, href, label, delay = 0 }) {
 
 export default function Footer() {
   const { rodape } = portfolioData.navegacao;
+  const mensagemWhatsApp = portfolioData.conteudo.social.mensagemWhatsApp;
+  const waLink = `https://wa.me/${rodape.whatsapp}?text=${encodeURIComponent(mensagemWhatsApp)}`;
 
   return (
     <footer
@@ -123,7 +125,7 @@ export default function Footer() {
           <div style={{ display: 'flex', gap: 12 }}>
             <AnimatedContactIcon
               Icon={WhatsAppIcon}
-              href={`https://wa.me/${rodape.whatsapp}`}
+              href={waLink}
               label="Enviar mensagem no WhatsApp"
               delay={0}
             />
@@ -157,7 +159,7 @@ export default function Footer() {
             />
             <AnimatedContactIcon
               Icon={YouTubeIcon}
-              href="https://youtube.com"
+              href={rodape.youtube}
               label="YouTube"
               delay={0.1}
             />

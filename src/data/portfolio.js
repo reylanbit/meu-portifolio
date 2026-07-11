@@ -13,13 +13,14 @@ export const portfolioData = {
     {
       ordem: 1,
       especie: "Australopithecus",
-      faseProfissional: "Estagiario / Carregador de Bolsa",
+      faseProfissional: "Estagiario / Carregador de Bolsa (BARCO)",
       local: "Coca-Cola Manaus",
       periodo: "Inicio",
       imagem: "/images/evolucao_01_australopithecus.png",
       imagemAlt: "Australopithecus segurando uma bolsa termica da Coca-Cola, estilo pintura rupestre digital",
       promptIA: "Australopithecus holding a Coca-Cola thermal bag, digital cave painting style, dark background, green neon accents",
       corretivo: "#00ff88",
+      detalhes: "Primeiro emprego. Carregador de bolsas termicas da Coca-Cola em Manaus. Aprendi o valor do trabalho braçal, pontualidade e servir bem o cliente. Foi la que nasceu a disciplina que hoje guia minha carreira em tecnologia.",
     },
     {
       ordem: 2,
@@ -31,6 +32,7 @@ export const portfolioData = {
       imagemAlt: "Homo habilis organizando papeis em uma mesa, estilo pintura rupestre digital",
       promptIA: "Homo habilis organizing papers at a desk, digital cave painting style, dark background, green neon accents",
       corretivo: "#00cc6a",
+      detalhes: "Primeiro contato com o mundo administrativo. Organizacao de documentos, controle de planilhas e atendimento ao publico. Aqui descobri que eu gostava de organizar informacoes — semente do que viria a ser programacao.",
     },
     {
       ordem: 3,
@@ -42,6 +44,7 @@ export const portfolioData = {
       imagemAlt: "Homo erectus em posicao de vigilancia, estilo pintura rupestre digital",
       promptIA: "Homo erectus standing guard vigilantly, digital cave painting style, dark background, green neon accents",
       corretivo: "#00aa55",
+      detalhes: "Trabalhei em varias empresas de seguranca patrimonial. Vigilancia, controle de acesso, monitoramento de cameras. Aprendi responsabilidade, protocolo e a importancia de sistemas confiaveis — conceitos que aplico em software ate hoje.",
     },
     {
       ordem: 4,
@@ -53,6 +56,7 @@ export const portfolioData = {
       imagemAlt: "Neanderthal pilotando uma moto com mochila de entrega, estilo pintura rupestre digital",
       promptIA: "Neanderthal riding a motorcycle with delivery bag, digital cave painting style, dark background, green neon accents",
       corretivo: "#008844",
+      detalhes: "Entregador de aplicativos em Manaus. Conheci a cidade inteira, enfrentei chuva, sol e burocracia de apps. Mas foi nessa epoca que descobri a programacao — ouvi falar de automacao e comecei a pesquisar no celular entre entregas.",
     },
     {
       ordem: 5,
@@ -64,6 +68,7 @@ export const portfolioData = {
       imagemAlt: "Homo sapiens programando em um laptop, estilo pintura rupestre digital futurista",
       promptIA: "Homo sapiens coding on a laptop, digital cave painting style meets futuristic, dark background, green neon accents",
       corretivo: "#00ff88",
+      detalhes: "O momento em que tudo convergiu. Comecei a programar, a criar conteudo e a monitorar turmas no curso MVP-FLOW. Da rua para o terminal — a evolucao mais real que ja vivi.",
     },
     {
       ordem: 6,
@@ -75,6 +80,7 @@ export const portfolioData = {
       imagemAlt: "Desenvolvedor moderno trabalhando com multiplas telas, estilo digital futurista",
       promptIA: "Modern developer working with multiple screens, futuristic digital style, dark background, green neon accents",
       corretivo: "#00ffaa",
+      detalhes: "Construindo portfolio interativo, automatizando processos com scripts, deploy em Cloudflare Pages. Cada projeto e uma prova de que a evolucao e possivel quando voce nao desiste.",
     },
     {
       ordem: 7,
@@ -86,6 +92,7 @@ export const portfolioData = {
       imagemAlt: "Visionario tecnologico moldando o futuro com codigo, estilo cyberpunk",
       promptIA: "Visionary technologist shaping the future with code, cyberpunk style, dark background, green neon accents",
       corretivo: "#00ffcc",
+      detalhes: "Onde estou indo. Arquitetar solucoes que impactam vidas, liderar times tecnicos e provar que origem nao define destino — codigo define.",
     },
   ],
 
@@ -94,7 +101,8 @@ export const portfolioData = {
     rodape: {
       whatsapp: "558598170-2374",
       email: "darlannasa@gmail.com",
-      links: ["YouTube", "GitHub"],
+      youtube: "https://www.youtube.com/@littlecoffeex",
+      github: "https://github.com/reylanbit",
     },
   },
 
@@ -114,6 +122,16 @@ export const portfolioData = {
     profissional: {
       cases: [
         {
+          nome: "MVP-FLOW Monitor Website",
+          problema: "Monitores de turma do curso MVP-FLOW precisavam de uma ferramenta unica para gerenciar respostas, scripts, FAQ e acompanhar o progresso dos alunos de forma eficiente.",
+          abordagem: "Website completo de monitoria com React e deploy no Cloudflare Pages. Inclui secao Hero, contrato de monitoria, scripts prontos, dashboard de estrutura, FAQ TOP 10 com comandos copiaveis, desafio de fluxo (WhatsApp + n8n + Gemini) e questionarios interativos.",
+          codigo: "// MVP-FLOW Monitor - Estrutura do Dashboard\nconst MonitorDashboard = () => (\n  <div className=\"monitor-grid\">\n    <HeroSection titulo=\"GUARDIAO DO FOCO TECNICO\" />\n    <ContratoMonitoria escopo={{ dentro: [...], fora: [...] }} />\n    <ScriptsResposta scripts={scriptsProntos} />\n    <FAQTop10 comandos={comandosCopiaveis} />\n    <DesafioFluxo ferramentas={['WhatsApp', 'n8n', 'Gemini']} />\n    <QuestionariosInterativos dados={questionarios} />\n  </div>\n);",
+          resultado: "WebsitePrivado e deploy gratuitCloudflare Pages, acessivel apenas por autenticacao. Monitores conseguem responder alunos 3x mais rapido com scripts prontos e FAQ copiavel.",
+          aprendizado: "Construir ferramentas internas e tao importante quanto construir para clientes. A eficiencia do monitor impacta diretamente a experiencia do aluno.",
+          metrica: { valor: "3x", label: "mais rapido" },
+          link: "https://mvp-monitor.pages.dev",
+        },
+        {
           nome: "Safe Travels",
           problema: "Seguranca em viagens era fragmentada e os usuarios nao tinham uma solucao unica para monitorar rotas, contatos de emergencia e status em tempo real.",
           abordagem: "Desenvolvimento de PWA React com notificacoes push, geolocalizacao em tempo real e dashboard para monitoramento.",
@@ -130,15 +148,6 @@ export const portfolioData = {
           resultado: "Ferramenta adotada por equipe de 8 desenvolvedores, aumentando a visibilidade do progresso em 60%.",
           aprendizado: "Interfaces de dados precisam ser simples para serem adotadas. Complexidade mata a usabilidade.",
           metrica: { valor: "60%", label: "mais produtividade" },
-        },
-        {
-          nome: "Script de Automacao Seguranca Patrimonial",
-          problema: "Processos de monitoramento de seguranca patrimonial eram manuais, lentos e propensos a erros humanos.",
-          abordagem: "Scripts de automacao com Node.js para coleta, processamento e alertas de dados de seguranca patrimonial.",
-          codigo: "const monitorPatrimonial = async (endpoint) => {\n  const data = await fetch(endpoint);\n  const parsed = await data.json();\n  const alerts = parsed.filter(item => item.status === 'critico');\n  if (alerts.length > 0) await sendNotifications(alerts);\n  return { total: parsed.length, alerts: alerts.length };\n};",
-          resultado: "Reducao de 70% no tempo de processamento de relatorios e eliminacao de 95% dos erros manuais.",
-          aprendizado: "Automacao bem planejada economiza horas de trabalho repetitivo e libera tempo para tarefas de maior valor.",
-          metrica: { valor: "70%", label: "mais eficiencia" },
         },
       ],
       processo: {
@@ -251,8 +260,9 @@ export const portfolioData = {
         feedback: "Direto e construtivo. Sem rodeios, sem eufemismos. Se ta bom, eu falo. Se pode melhorar, eu falo tambem.",
         oQueNaoFazer: "Nao me mande mensagem 'oi' sem contexto. Nao peca prazo sem definir escopo. Nao mude requisitos no dia da entrega.",
       },
-      mentorias: "Contribuicao ativa em comunidades locais de Manaus. Mentoria informal para iniciantes que demonstram comprometimento real.",
+      mentorias: "Monitor de turma do curso MVP-FLOW. Contribuicao ativa em comunidades locais de Manaus. Mentoria informal para iniciantes que demonstram comprometimento real.",
       disponibilidade: "Aberto para freelas, mentorias e oportunidades CLT com time remoto ou hibrido em Manaus.",
+      mensagemWhatsApp: "Ola Darlann! Vi seu portfolio e gostaria de conversar sobre um projeto/oportunidade. Pode me chamar?",
     },
 
     extra: {

@@ -1,4 +1,4 @@
-import { motion, useScroll, useTransform } from 'framer-motion';
+import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useRef, useState, useEffect } from 'react';
 import { portfolioData } from '../data/portfolio';
 
@@ -57,64 +57,235 @@ function MetricCounter({ value, label, delay }) {
   );
 }
 
-function EstagioCard({ estagio, index }) {
+function EstagioModal({ estagio, onClose }) {
+  useEffect(() => {
+    const handleKey = (e) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handleKey);
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      document.body.style.overflow = '';
+    };
+  }, [onClose]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+      onClick={onClose}
+      style={{
+        position: 'fixed',
+        inset: 0,
+        background: 'rgba(0,0,0,0.85)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        zIndex: 10000,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '24px',
+      }}
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Detalhes: ${estagio.especie}`}
+    >
+      <motion.div
+        initial={{ scale: 0.9, y: 30, filter: 'blur(8px)' }}
+        animate={{ scale: 1, y: 0, filter: 'blur(0px)' }}
+        exit={{ scale: 0.9, y: 30, filter: 'blur(8px)' }}
+        transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+        onClick={(e) => e.stopPropagation()}
+        style={{
+          background: '#111',
+          border: `1px solid ${estagio.corretivo}33`,
+          borderRadius: 'var(--radius)',
+          maxWidth: 600,
+          width: '100%',
+          maxHeight: '85vh',
+          overflow: 'auto',
+          position: 'relative',
+        }}
+      >
+        <button
+          onClick={onClose}
+          aria-label="Fechar"
+          style={{
+            position: 'absolute',
+            top: 16,
+            right: 16,
+            background: 'rgba(255,255,255,0.06)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            borderRadius: 8,
+            color: '#888',
+            width: 36,
+            height: 36,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            fontSize: '1rem',
+            zIndex: 2,
+            transition: 'all 0.2s',
+          }}
+          onMouseEnter={(e) => { e.target.style.color = '#00ff88'; e.target.style.borderColor = '#00ff8844'; }}
+          onMouseLeave={(e) => { e.target.style.color = '#888'; e.target.style.borderColor = 'rgba(255,255,255,0.1)'; }}
+        >
+          ✕
+        </button>
+
+        <img
+          src={estagio.imagem}
+          alt={estagio.imagemAlt}
+          style={{
+            width: '100%',
+            height: 260,
+            objectFit: 'cover',
+            display: 'block',
+            borderRadius: 'var(--radius) var(--radius) 0 0',
+          }}
+        />
+
+        <div style={{ padding: '28px 32px 32px' }}>
+          <span style={{
+            fontFamily: "'Fragment Mono', monospace",
+            fontSize: '0.65rem',
+            color: '#c9a84c',
+            letterSpacing: '0.1em',
+          }}>
+            etapa {String(estagio.ordem).padStart(2, '0')} / 07 — {estagio.periodo}
+          </span>
+
+          <h3 style={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: '1.5rem',
+            color: estagio.corretivo,
+            fontWeight: 800,
+            marginTop: 8,
+            marginBottom: 4,
+            letterSpacing: '-0.02em',
+          }}>
+            {estagio.especie}
+          </h3>
+
+          <div style={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: '1rem',
+            color: '#f0f0f0',
+            fontWeight: 600,
+            marginBottom: 2,
+          }}>
+            {estagio.faseProfissional}
+          </div>
+
+          <div style={{
+            fontFamily: "'Fragment Mono', monospace",
+            fontSize: '0.75rem',
+            color: '#888',
+            marginBottom: 20,
+          }}>
+            {estagio.local}
+          </div>
+
+          <div style={{
+            width: '100%',
+            height: 1,
+            background: `linear-gradient(90deg, ${estagio.corretivo}44, transparent)`,
+            marginBottom: 20,
+          }} />
+
+          <p style={{
+            fontFamily: "'Plus Jakarta Sans', sans-serif",
+            fontSize: '0.9rem',
+            color: '#ccc',
+            lineHeight: 1.8,
+          }}>
+            {estagio.detalhes}
+          </p>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+}
+
+function EstagioCard({ estagio, index, onSelect }) {
   const ref = useRef(null);
   const { scrollYProgress } = useScroll({
     target: ref,
     offset: ['start end', 'center center'],
   });
   const opacity = useTransform(scrollYProgress, [0, 0.4], [0, 1]);
-  const x = useTransform(scrollYProgress, [0, 0.4], [index % 2 === 0 ? -80 : 80, 0]);
   const blurVal = useTransform(scrollYProgress, [0, 0.4], [8, 0]);
-  const isLeft = index % 2 === 0;
+
+  const isEven = index % 2 === 0;
+  const x = useTransform(scrollYProgress, [0, 0.4], [isEven ? -80 : 80, 0]);
 
   return (
     <motion.article
       ref={ref}
-      style={{ opacity, x, display: 'flex', justifyContent: isLeft ? 'flex-start' : 'flex-end', position: 'relative', marginBottom: 40 }}
+      style={{
+        opacity,
+        x,
+        display: 'flex',
+        justifyContent: isEven ? 'flex-start' : 'flex-end',
+        position: 'relative',
+        marginBottom: 48,
+      }}
       role="listitem"
     >
       <motion.div
         style={{
           filter: blurVal,
-          maxWidth: 500,
+          maxWidth: 520,
           width: '100%',
         }}
       >
         <div style={{
           display: 'grid',
-          gridTemplateColumns: '120px 1fr',
+          gridTemplateColumns: isEven ? '130px 1fr' : '1fr 130px',
           gap: 20,
           alignItems: 'start',
         }}>
-          <motion.div
-            whileHover={{ scale: 1.05, rotate: 2 }}
-            style={{
-              width: 120,
-              height: 120,
-              borderRadius: 'var(--radius)',
-              overflow: 'hidden',
-              border: `2px solid ${estagio.corretivo}`,
-              boxShadow: `0 0 30px ${estagio.corretivo}22`,
-              flexShrink: 0,
-              position: 'relative',
-            }}
-          >
-            <img
-              src={estagio.imagem}
-              alt={estagio.imagemAlt}
-              loading="lazy"
+          {isEven && (
+            <motion.div
+              whileHover={{ scale: 1.05, rotate: 2 }}
+              onClick={() => onSelect(estagio)}
+              onKeyDown={(e) => { if (e.key === 'Enter') onSelect(estagio); }}
+              role="button"
+              tabIndex={0}
+              aria-label={`Ver detalhes de ${estagio.especie}`}
               style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover',
-                display: 'block',
+                width: 130,
+                height: 130,
+                borderRadius: 'var(--radius)',
+                overflow: 'hidden',
+                border: `2px solid ${estagio.corretivo}`,
+                boxShadow: `0 0 30px ${estagio.corretivo}22`,
+                flexShrink: 0,
+                cursor: 'pointer',
+                transition: 'box-shadow 0.3s',
               }}
-            />
-          </motion.div>
+              onMouseEnter={(e) => e.currentTarget.style.boxShadow = `0 0 40px ${estagio.corretivo}44`}
+              onMouseLeave={(e) => e.currentTarget.style.boxShadow = `0 0 30px ${estagio.corretivo}22`}
+            >
+              <img
+                src={estagio.imagem}
+                alt={estagio.imagemAlt}
+                loading="lazy"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+            </motion.div>
+          )}
 
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+          <div style={{ textAlign: isEven ? 'left' : 'right' }}>
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 10,
+              marginBottom: 6,
+              justifyContent: isEven ? 'flex-start' : 'flex-end',
+            }}>
               <span style={{
                 fontFamily: "'Fragment Mono', monospace",
                 fontSize: '0.65rem',
@@ -154,21 +325,59 @@ function EstagioCard({ estagio, index }) {
               {estagio.local}
             </div>
 
-            <div style={{
-              marginTop: 12,
-              padding: '10px 14px',
-              background: `linear-gradient(135deg, ${estagio.corretivo}08, transparent)`,
-              borderRadius: 'var(--radius-xs)',
-              border: `1px solid ${estagio.corretivo}15`,
-              fontFamily: "'Fragment Mono', monospace",
-              fontSize: '0.68rem',
-              color: '#888',
-              lineHeight: 1.5,
-              fontStyle: 'italic',
-            }}>
-              {estagio.imagemAlt}
-            </div>
+            <motion.div
+              whileHover={{ background: `linear-gradient(135deg, ${estagio.corretivo}12, transparent)` }}
+              style={{
+                marginTop: 12,
+                padding: '10px 14px',
+                background: `linear-gradient(135deg, ${estagio.corretivo}08, transparent)`,
+                borderRadius: 'var(--radius-xs)',
+                border: `1px solid ${estagio.corretivo}15`,
+                fontFamily: "'Fragment Mono', monospace",
+                fontSize: '0.68rem',
+                color: '#888',
+                lineHeight: 1.5,
+                fontStyle: 'italic',
+                textAlign: isEven ? 'left' : 'right',
+                cursor: 'pointer',
+              }}
+              onClick={() => onSelect(estagio)}
+            >
+              clique para ver mais →
+            </motion.div>
           </div>
+
+          {!isEven && (
+            <motion.div
+              whileHover={{ scale: 1.05, rotate: -2 }}
+              onClick={() => onSelect(estagio)}
+              onKeyDown={(e) => { if (e.key === 'Enter') onSelect(estagio); }}
+              role="button"
+              tabIndex={0}
+              aria-label={`Ver detalhes de ${estagio.especie}`}
+              style={{
+                width: 130,
+                height: 130,
+                borderRadius: 'var(--radius)',
+                overflow: 'hidden',
+                border: `2px solid ${estagio.corretivo}`,
+                boxShadow: `0 0 30px ${estagio.corretivo}22`,
+                flexShrink: 0,
+                cursor: 'pointer',
+                transition: 'box-shadow 0.3s',
+                order: -1,
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.boxShadow = `0 0 40px ${estagio.corretivo}44`}
+              onMouseLeave={(e) => e.currentTarget.style.boxShadow = `0 0 30px ${estagio.corretivo}22`}
+            >
+              <img
+                src={estagio.imagem}
+                alt={estagio.imagemAlt}
+                loading="lazy"
+                style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+              />
+            </motion.div>
+          )}
         </div>
       </motion.div>
     </motion.article>
@@ -178,6 +387,7 @@ function EstagioCard({ estagio, index }) {
 export default function EvolucaoSection() {
   const containerRef = useRef(null);
   const { estagios, conteudo, metricas } = portfolioData;
+  const [selectedEstagio, setSelectedEstagio] = useState(null);
 
   return (
     <section id="evolucao" className="section" ref={containerRef} aria-labelledby="evolucao-title">
@@ -275,18 +485,26 @@ export default function EvolucaoSection() {
           aria-hidden="true"
           style={{
             position: 'absolute',
-            left: 60,
+            left: '50%',
             top: 0,
             bottom: 0,
             width: 2,
-            background: 'linear-gradient(to bottom, transparent, rgba(0,255,136,0.2), rgba(0,255,136,0.2), transparent)',
+            background: 'linear-gradient(to bottom, transparent, rgba(0,255,136,0.15), rgba(0,255,136,0.15), transparent)',
+            transform: 'translateX(-50%)',
           }}
         />
 
         {estagios.map((estagio, index) => (
-          <EstagioCard key={estagio.ordem} estagio={estagio} index={index} />
+          <EstagioCard key={estagio.ordem} estagio={estagio} index={index} onSelect={setSelectedEstagio} />
         ))}
       </div>
+
+      {/* Modal */}
+      <AnimatePresence>
+        {selectedEstagio && (
+          <EstagioModal estagio={selectedEstagio} onClose={() => setSelectedEstagio(null)} />
+        )}
+      </AnimatePresence>
     </section>
   );
 }

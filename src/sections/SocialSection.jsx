@@ -263,7 +263,7 @@ export default function SocialSection() {
           Freelance, mentoria ou CLT — bora conversar.
         </p>
         <motion.a
-          href={`https://wa.me/${portfolioData.navegacao.rodape.whatsapp}`}
+          href={`https://wa.me/${portfolioData.navegacao.rodape.whatsapp}?text=${encodeURIComponent(portfolioData.conteudo.social.mensagemWhatsApp)}`}
           target="_blank"
           rel="noopener noreferrer"
           className="btn"

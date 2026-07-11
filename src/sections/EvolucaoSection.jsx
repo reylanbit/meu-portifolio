@@ -5,7 +5,7 @@ import { portfolioData } from '../data/portfolio';
 function MetricCounter({ value, label, delay }) {
   const ref = useRef(null);
   const [count, setCount] = useState(0);
-  const [hasAnimated, setHasAnimated] = useState(false);
+  const hasAnimatedRef = useRef(false);
 
   const numericValue = parseInt(value);
 
@@ -13,8 +13,8 @@ function MetricCounter({ value, label, delay }) {
     let frameId;
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasAnimated) {
-          setHasAnimated(true);
+        if (entry.isIntersecting && !hasAnimatedRef.current) {
+          hasAnimatedRef.current = true;
           const duration = 1500;
           const startTime = performance.now();
           const animate = (currentTime) => {
@@ -31,7 +31,7 @@ function MetricCounter({ value, label, delay }) {
     );
     if (ref.current) observer.observe(ref.current);
     return () => { observer.disconnect(); cancelAnimationFrame(frameId); };
-  }, [hasAnimated, numericValue]);
+  }, [numericValue]);
 
   return (
     <div ref={ref} style={{ textAlign: 'center' }}>
